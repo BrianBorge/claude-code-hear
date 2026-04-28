@@ -13,16 +13,11 @@ if [ ! -d "$SAVE_DIR" ]; then
   exit 1
 fi
 
-# Derive the project directory from CWD (same path sanitization Claude Code uses)
-SANITIZED_CWD=$(echo "$PWD" | sed 's|^/||' | tr '/' '-')
-PROJECT_DIR="$HOME/.claude/projects/-$SANITIZED_CWD"
-
+# Find the most recently modified session directory in the save dir
+LATEST_DIR=$(ls -td "$SAVE_DIR"/*/ 2>/dev/null | head -1)
 SESSION_ID=""
-if [ -d "$PROJECT_DIR" ]; then
-  LATEST_TRANSCRIPT=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -1)
-  if [ -n "$LATEST_TRANSCRIPT" ]; then
-    SESSION_ID=$(basename "$LATEST_TRANSCRIPT" .jsonl)
-  fi
+if [ -n "$LATEST_DIR" ]; then
+  SESSION_ID=$(basename "$LATEST_DIR")
 fi
 
 FILE="$SAVE_DIR/$SESSION_ID/latest.txt"

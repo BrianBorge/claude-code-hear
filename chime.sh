@@ -6,7 +6,7 @@
 #
 # Usage: chime.sh [stop|notification|stop_failure]
 #
-# Receives JSON on stdin with session_id and last_assistant_message fields.
+# Receives JSON on stdin with session_id and transcript_path fields.
 #
 
 set -euo pipefail
@@ -27,7 +27,15 @@ mkdir -p "$SAVE_DIR"
 INPUT=$(cat)
 
 SESSION_ID=$(echo "$INPUT" | /usr/bin/jq -r '.session_id // empty')
-MESSAGE=$(echo "$INPUT" | /usr/bin/jq -r '.last_assistant_message // empty')
+
+# Extract last assistant message from the transcript file
+MESSAGE=""
+TRANSCRIPT_PATH=$(echo "$INPUT" | /usr/bin/jq -r '.transcript_path // empty')
+if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
+  MESSAGE=$(grep '"type":"assistant"' "$TRANSCRIPT_PATH" | tail -1 | /usr/bin/jq -r '
+    [.message.content[]? | select(.type == "text") | .text] | join("\n") // empty
+  ')
+fi
 
 # Only save messages on stop events with substantive content
 if [ "$EVENT_TYPE" = "stop" ] && [ -n "$SESSION_ID" ] && [ -n "$MESSAGE" ] && [ "${#MESSAGE}" -gt 20 ]; then
