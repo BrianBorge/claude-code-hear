@@ -28,6 +28,7 @@ Then restart Claude Code.
 | `/hear-replay N` | Read the response from N turns ago |
 | `/hear-read-diff` | Describe recent file changes in plain language |
 | `/hear-read-error` | Speak just the error message, skipping noise |
+| `/hear-read-recap` | Read aloud only the recap section of the last response |
 
 Different chime sounds indicate what happened:
 - Glass -- response ready
