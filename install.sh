@@ -30,7 +30,7 @@ if [ -f "$SETTINGS" ] && jq -e '.hooks' "$SETTINGS" &>/dev/null; then
 fi
 
 # Install all skills
-SKILL_NAMES=("hear-speak" "hear-replay" "hear-summarize" "hear-read-diff" "hear-read-error")
+SKILL_NAMES=("hear-speak" "hear-replay" "hear-summarize" "hear-read-diff" "hear-read-error" "hear-read-recap")
 
 for SKILL in "${SKILL_NAMES[@]}"; do
   DEST="$HOME/.claude/skills/$SKILL"
